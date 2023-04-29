@@ -6,7 +6,10 @@
 
   <!-- ur5 driver -->
   <!-- Load robot URDF -->
-  <param name="robot_description" command="$(find xacro)/xacro '/home/samay/master_ws/src/UR5-ros-melodic/turbo/turbo_description/urdf/turbo.urdf'"/>
+  <arg name="kinematics_config" value="$(find turbo_description)/config/left_arm_calibration.yaml"/> <!-- ?????????????????????????????????????????? -->
+  <include file="$(find turbo_description)/launch/load_turbo.launch">
+    <arg name="kinematics_params" value="$(arg kinematics_config)"/>
+  </include>
 
   <group ns="left">    
     <include file="$(find ur_robot_driver)/launch/ur5_bringup.launch">
@@ -14,8 +17,7 @@
       <arg name="limited" value="$(arg limited)"/>
       <arg name="robot_ip" value="182.22.22.2"/>
       <arg name="tf_prefix" value="left"/>
-      <arg name="kinematics_config" value="$(find turbo_description)/config/left_arm_calibration.yaml"/>
-      <arg name="robot_description_file" value="$(arg robot_description)"/>
+      <arg name="kinematics_config" value="$(arg kinematics_config)"/>  
       <arg name="controller_config_file" value="$(find ur_robot_driver)/config/ur5_left_controllers.yaml"/>    
       <arg name="reverse_port" value="50001"/>
       <arg name="script_sender_port" value="50002"/>
@@ -31,7 +33,6 @@
       <arg name="robot_ip" value="172.22.22.2"/>
       <arg name="tf_prefix" value="right"/>
       <arg name="kinematics_config" value="$(find turbo_description)/config/right_arm_calibration.yaml"/>
-      <arg name="robot_description_file" value="$(arg robot_description)"/>
       <arg name="controller_config_file" default="$(find ur_robot_driver)/config/ur5_right_controllers.yaml"/>
       <arg name="reverse_port" value="50005"/>
       <arg name="script_sender_port" value="50006"/>

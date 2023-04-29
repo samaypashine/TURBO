@@ -17,7 +17,7 @@
 
     Refer to 'inc/ur_macro.xacro' for more information.
   -->
-  <xacro:include filename="$(find turbo_description)/urdf/inc/ur5_macro.xacro"/>
+  <xacro:include filename="$(find turbo_description)/urdf/inc/turbo_macro.xacro"/>
 
   <!-- parameters -->
    <xacro:arg name="joint_limit_params" default="$(find ur_description)/config/ur5/joint_limits.yaml"/>

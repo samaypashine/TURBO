@@ -1,7 +1,7 @@
 <launch>
   <!-- Load URDF file -->
-  <param name="robot_description" command="$(find xacro)/xacro '/home/samay/master_ws/src/UR5-ros-melodic/turbo/turbo_description/urdf/ur5.xacro'" />
-  <param name="robot_description_semantic" command="$(find xacro)/xacro --inorder '/home/samay/master_ws/src/UR5-ros-melodic/turbo/turbo_description/urdf/ur5.xacro'" />
+  <param name="robot_description" command="$(find xacro)/xacro '$(find turbo_description)/urdf/turbo.urdf.xacro'" />
+  <param name="robot_description_semantic" command="$(find xacro)/xacro '$(find turbo_description)/urdf/turbo.urdf.xacro'" />
 
   <!-- Launch RViz -->
   <node name="rviz" pkg="rviz" type="rviz" args="-d /opt/ros/melodic/share/rviz/default.rviz" />
