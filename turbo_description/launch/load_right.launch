@@ -2,7 +2,6 @@
 <launch>
   <!--ur5 parameters files -->
   <arg name="joint_limit_params" default="$(find ur_description)/config/ur5/joint_limits.yaml"/>
-  <arg name="left_kinematics_params" default="$(find turbo_description)/config/left_arm_calibration.yaml"/>
   <arg name="right_kinematics_params" default="$(find turbo_description)/config/right_arm_calibration.yaml"/>
   <arg name="physical_params" default="$(find ur_description)/config/ur5/physical_parameters.yaml"/>
   <arg name="visual_params" default="$(find ur_description)/config/ur5/visual_parameters.yaml"/>
@@ -29,9 +28,8 @@
        include the ur_macro.xacro file into it. Then write a new .launch file
        to load it onto the parameter server.
   -->
-  <param name="robot_description" command="$(find xacro)/xacro '$(find turbo_description)/urdf/turbo.urdf.xacro'
+  <param name="robot_description" command="$(find xacro)/xacro '$(find turbo_description)/urdf/right_arm.urdf.xacro'
     joint_limits_parameters_file:=$(arg joint_limit_params)
-    left_kinematics_parameters_file:=$(arg left_kinematics_params)
     right_kinematics_parameters_file:=$(arg right_kinematics_params)
     physical_parameters_file:=$(arg physical_params)
     visual_parameters_file:=$(arg visual_params)

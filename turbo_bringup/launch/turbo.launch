@@ -2,13 +2,16 @@
 <launch>
   <arg name="debug" default="false"/>
   <arg name="limited" default="false"/>
-  <arg name="robot_description" default="$(find turbo_description)/launch/load_ur5.launch" doc="Robot description launch file."/>
+  <arg name="robot_description" default="$(find turbo_description)/launch/load_turbo.launch"/>
+  <arg name="left_kinematics_config" value="$(find turbo_description)/config/left_arm_calibration.yaml"/>
+  <arg name="right_kinematics_config" value="$(find turbo_description)/config/right_arm_calibration.yaml"/>
 
   <!-- ur5 driver -->
-  <!-- Load robot URDF -->
-  <arg name="kinematics_config" value="$(find turbo_description)/config/left_arm_calibration.yaml"/> <!-- ?????????????????????????????????????????? -->
-  <include file="$(find turbo_description)/launch/load_turbo.launch">
-    <arg name="kinematics_params" value="$(arg kinematics_config)"/>
+  <!-- Load robot URDF -->  
+  <include file="$(arg robot_description)">
+    <arg name="joint_limit_params" value="$(find turbo_dual_moveit_config)/config/joint_limits.yaml"/>
+    <arg name="left_kinematics_params" value="$(arg left_kinematics_config)"/>
+    <arg name="right_kinematics_params" value="$(arg right_kinematics_config)"/>
   </include>
 
   <group ns="left">    
@@ -17,7 +20,7 @@
       <arg name="limited" value="$(arg limited)"/>
       <arg name="robot_ip" value="182.22.22.2"/>
       <arg name="tf_prefix" value="left"/>
-      <arg name="kinematics_config" value="$(arg kinematics_config)"/>  
+      <arg name="kinematics_config" value="$(arg left_kinematics_config)"/>  
       <arg name="controller_config_file" value="$(find ur_robot_driver)/config/ur5_left_controllers.yaml"/>    
       <arg name="reverse_port" value="50001"/>
       <arg name="script_sender_port" value="50002"/>
@@ -32,8 +35,8 @@
       <arg name="limited" value="$(arg limited)"/>
       <arg name="robot_ip" value="172.22.22.2"/>
       <arg name="tf_prefix" value="right"/>
-      <arg name="kinematics_config" value="$(find turbo_description)/config/right_arm_calibration.yaml"/>
-      <arg name="controller_config_file" default="$(find ur_robot_driver)/config/ur5_right_controllers.yaml"/>
+      <arg name="kinematics_config" value="$(arg right_kinematics_config)"/>
+      <arg name="controller_config_file" value="$(find ur_robot_driver)/config/ur5_right_controllers.yaml"/>
       <arg name="reverse_port" value="50005"/>
       <arg name="script_sender_port" value="50006"/>
       <arg name="trajectory_port" value="50007"/>
@@ -43,17 +46,13 @@
 
   <node name="right_joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" respawn="true">
     <rosparam param="source_list">[/right/gripper/joint_states, /right/joint_states]</rosparam>
+    <param name="rate" value="50" />
   </node>
   
   <node name="left_joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" respawn="true">
     <rosparam param="source_list">[/left/gripper/joint_states, /left/joint_states]</rosparam>
+    <param name="rate" value="50" />
   </node>
-  
-  <!--gripper driver -->
-  <!-- <include file="$(find turbo_bringup)/launch/robotiq_85.launch">
-    <arg name="gripper_test" value="$(arg gripper_test)"/>
-    <arg name="comport" value="/dev/ttyUSB0"/>
-  </include> -->
 
   <!-- Run the main MoveIt executable -->
   <include file="$(find turbo_dual_moveit_config)/launch/move_group.launch">

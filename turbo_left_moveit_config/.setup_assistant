@@ -1,11 +1,11 @@
 moveit_setup_assistant_config:
   URDF:
     package: turbo_description
-    relative_path: urdf/left_arm.urdf
+    relative_path: urdf/left_arm.urdf.xacro
     xacro_args: ""
   SRDF:
     relative_path: config/ur5.srdf
   CONFIG:
     author_name: Samay Pashine
     author_email: samay.pashine@tufts.edu
-    generated_timestamp: 1682014370
+    generated_timestamp: 1683143059

@@ -146,8 +146,6 @@ left_manipulator:
     - LazyPRMstar
     - SPARS
     - SPARStwo
-  projection_evaluator: joints(left_shoulder_pan_joint,left_shoulder_lift_joint)
-  longest_valid_segment_fraction: 0.005
 right_manipulator:
   default_planner_config: RRTConnect
   planner_configs:

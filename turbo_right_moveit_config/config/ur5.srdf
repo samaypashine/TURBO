@@ -12,13 +12,6 @@
     <group name="right_manipulator">
         <chain base_link="right_base_link" tip_link="right_ee_link" />
     </group>
-    <!--PASSIVE JOINT: Purpose: this element is used to mark joints that are not actuated-->
-    <passive_joint name="right_gripper_finger1_inner_knuckle_joint" />
-    <passive_joint name="right_gripper_finger1_finger_tip_joint" />
-    <passive_joint name="right_gripper_finger1_joint" />
-    <passive_joint name="right_gripper_finger2_inner_knuckle_joint" />
-    <passive_joint name="right_gripper_finger2_finger_tip_joint" />
-    <passive_joint name="right_gripper_finger2_joint" />
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
     <disable_collisions link1="camera_link" link2="frame" reason="Adjacent" />
     <disable_collisions link1="camera_link" link2="right_base_link_inertia" reason="Never" />

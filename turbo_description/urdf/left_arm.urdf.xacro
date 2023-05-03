@@ -17,12 +17,11 @@
 
     Refer to 'inc/ur_macro.xacro' for more information.
   -->
-  <xacro:include filename="$(find turbo_description)/urdf/inc/turbo_macro.xacro"/>
+  <xacro:include filename="$(find turbo_description)/urdf/inc/left_arm_macro.xacro"/>
 
   <!-- parameters -->
    <xacro:arg name="joint_limit_params" default="$(find ur_description)/config/ur5/joint_limits.yaml"/>
    <xacro:arg name="left_kinematics_params" default="$(find turbo_description)/config/left_arm_calibration.yaml"/>
-   <xacro:arg name="right_kinematics_params" default="$(find turbo_description)/config/right_arm_calibration.yaml"/>
    <xacro:arg name="physical_params" default="$(find ur_description)/config/ur5/physical_parameters.yaml"/>
    <xacro:arg name="visual_params" default="$(find ur_description)/config/ur5/visual_parameters.yaml"/>
    <xacro:arg name="transmission_hw_interface" default="hardware_interface/PositionJointInterface"/>
@@ -33,7 +32,6 @@
   <xacro:ur5_robot
     joint_limits_parameters_file="$(arg joint_limit_params)"
     left_kinematics_parameters_file="$(arg left_kinematics_params)"
-    right_kinematics_parameters_file="$(arg right_kinematics_params)"
     physical_parameters_file="$(arg physical_params)"
     visual_parameters_file="$(arg visual_params)"
     transmission_hw_interface="$(arg transmission_hw_interface)"
@@ -106,13 +104,6 @@
       <origin xyz="0.5 1.02 1" rpy="1.57 0 0"/>
   </joint>
 
-  <!-- right arm -->
-  <joint name="right_ur5_to_frame" type="fixed">
-    <parent link="frame"/>
-    <child link = "right_base_link"/>
-    <origin xyz="0.265 0.635 1.275" rpy="-0.785 3.14 1.57"/>
-  </joint>
-
   <!-- left arm -->
   <joint name="left_ur5_to_frame" type="fixed">
     <parent link="frame"/>
@@ -128,22 +119,11 @@
     <origin xyz="0.54 0.54 1.45" rpy="0 1.30 -1.57"/>
   </joint>
 
-  <link name="right_ee_link"/>
-  <joint name="right_link_to_ee" type="fixed">
-    <parent link="right_flange"/>
-    <child link = "right_ee_link"/>
-  </joint>
-
   <link name="left_ee_link"/>
   <joint name="left_link_to_ee" type="fixed">
     <parent link="left_flange"/>
     <child link = "left_ee_link"/>
   </joint>
-
-  <!-- Right robotiq 85 -->
-  <xacro:robotiq_85_gripper prefix="right_" parent="right_ee_link">
-    <origin xyz="0 0 0" rpy="0 0 0"/>
-  </xacro:robotiq_85_gripper>
 
   <!-- Left robotiq 85 -->
   <xacro:robotiq_85_gripper prefix="left_" parent="left_ee_link">
