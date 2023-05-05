@@ -20,6 +20,10 @@
       <arg name="tf_prefix" value="left"/>
       <arg name="kinematics_config" value="$(arg left_kinematics_config)"/>  
       <arg name="controller_config_file" value="$(find ur_robot_driver)/config/ur5_left_controllers.yaml"/>    
+      
+      <arg name="controllers" value="left_joint_state_controller left_scaled_pos_joint_traj_controller left_speed_scaling_state_controller left_force_torque_sensor_controller"/>
+      <arg name="stopped_controllers" value="left_pos_joint_traj_controller left_joint_group_vel_controller"/>
+      
       <arg name="reverse_port" value="50001"/>
       <arg name="script_sender_port" value="50002"/>
       <arg name="trajectory_port" value="50003"/>

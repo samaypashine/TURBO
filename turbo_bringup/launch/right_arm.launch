@@ -12,18 +12,24 @@
     <arg name="right_kinematics_params" value="$(arg right_kinematics_config)"/>
   </include>
 
-  <include file="$(find ur_robot_driver)/launch/ur5_bringup.launch">
-    <arg name="debug" value="$(arg debug)"/>
-    <arg name="limited" value="$(arg limited)"/>
-    <arg name="robot_ip" value="172.22.22.2"/>
-    <arg name="tf_prefix" value="right"/>
-    <arg name="kinematics_config" value="$(arg right_kinematics_config)"/>  
-    <arg name="controller_config_file" value="$(find turbo_right_moveit_config)/config/ros_controllers.yaml"/>    
-    <arg name="reverse_port" value="50005"/>
-    <arg name="script_sender_port" value="50006"/>
-    <arg name="trajectory_port" value="50007"/>
-    <arg name="script_command_port" value="50010"/>
-  </include>
+  <group ns="right">
+    <include file="$(find ur_robot_driver)/launch/ur5_bringup.launch">
+      <arg name="debug" value="$(arg debug)"/>
+      <arg name="limited" value="$(arg limited)"/>
+      <arg name="robot_ip" value="172.22.22.2"/>
+      <arg name="tf_prefix" value="right"/>
+      <arg name="kinematics_config" value="$(arg right_kinematics_config)"/>  
+      <arg name="controller_config_file" value="$(find ur_robot_driver)/config/ur5_right_controllers.yaml"/>    
+      
+      <arg name="controllers" value="right_joint_state_controller right_scaled_pos_joint_traj_controller right_speed_scaling_state_controller right_force_torque_sensor_controller"/>
+      <arg name="stopped_controllers" value="right_pos_joint_traj_controller right_joint_group_vel_controller"/>
+      
+      <arg name="reverse_port" value="50005"/>
+      <arg name="script_sender_port" value="50006"/>
+      <arg name="trajectory_port" value="50007"/>
+      <arg name="script_command_port" value="50010"/>
+    </include>
+  </group>
   
   <node name="right_joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" respawn="true">
     <rosparam param="source_list">[/gripper/joint_states, /joint_states]</rosparam>
