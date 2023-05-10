@@ -4,6 +4,9 @@
   <arg name="debug_left" default="false"/>
   <arg name="debug_right" default="false"/>
   
+  <arg name="left_gripper_test" default="false"/>
+  <arg name="right_gripper_test" default="false"/>
+  
   <arg name="limited_left" default="false"/>
   <arg name="limited_right" default="false"/>
  
@@ -40,6 +43,12 @@
       <arg name="trajectory_port" value="50003"/>
       <arg name="script_command_port" value="50004"/>
     </include>
+
+    <!-- Left gripper driver -->
+    <include file="$(find turbo_bringup)/launch/robotiq_85.launch">
+      <arg name="gripper_test" value="$(arg left_gripper_test)"/>
+      <arg name="comport" value="/dev/ttyUSB1"/>
+    </include>
   </group>
 
   <!-- Initializing Right Arm with the following Configuration -->
@@ -55,6 +64,12 @@
       <arg name="script_sender_port" value="50006"/>
       <arg name="trajectory_port" value="50007"/>
       <arg name="script_command_port" value="50010"/>
+    </include>
+
+    <!-- Right gripper driver -->
+    <include file="$(find turbo_bringup)/launch/robotiq_85.launch">
+      <arg name="gripper_test" value="$(arg right_gripper_test)"/>
+      <arg name="comport" value="/dev/ttyUSB0"/>
     </include>
   </group>
 

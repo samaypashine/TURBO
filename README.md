@@ -23,4 +23,6 @@ TURBO (Twin Universal Robot Boosting Operation). This is the project dealing wit
 2. ``` roslaunch turbo_bringup turbo.launch ``` // Double Tab to look at the parameters. 
 3. Once the Rviz is booted, open the `rviz_config.rviz` file to start planning and moving the arms using MoveIt.
 
-
+## Demos
+1. Pick n Place demo : In this demo, both arms would move to a location pick an object, Place it to a location for the other robot to do the same.
+   ``` rosrun turbo_demos pick_n_place```
