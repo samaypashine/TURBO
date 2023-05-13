@@ -35,7 +35,7 @@
       <arg name="debug" value="$(arg debug_left)"/>
       <arg name="limited" value="$(arg limited_left)"/>
       <arg name="robot_ip" value="$(arg left_robot_ip)"/>
-      <arg name="tf_prefix" value="$(arg left_prefix)"/>
+      <arg name="tf_prefix" value="$(arg left_prefix)_"/>
       <arg name="kinematics_config" value="$(arg left_kinematics_config)"/>  
       <arg name="controller_config_file" value="$(arg left_controller_config_file)"/>    
       <arg name="reverse_port" value="50001"/>
@@ -57,7 +57,7 @@
       <arg name="debug" value="$(arg debug_right)"/>
       <arg name="limited" value="$(arg limited_right)"/>
       <arg name="robot_ip" value="$(arg right_robot_ip)"/>
-      <arg name="tf_prefix" value="$(arg right_prefix)"/>
+      <arg name="tf_prefix" value="$(arg right_prefix)_"/>
       <arg name="kinematics_config" value="$(arg right_kinematics_config)"/>
       <arg name="controller_config_file" value="$(arg right_controller_config_file)"/>
       <arg name="reverse_port" value="50005"/>
