@@ -28,3 +28,5 @@ TURBO (Twin Universal Robot Boosting Operation). This is the project dealing wit
    ``` rosrun turbo_demos teleoperation```
 2. Pick n Place demo : In this demo, both arms would move to a location pick an object, Place it to a location for the other robot to do the same.
    ``` rosrun turbo_demos pick_n_place```
+   
+   ![ezgif com-gif-maker1](https://github.com/samaypashine/TURBO/assets/51475380/eb6d0b7f-4194-4f0c-a749-93bcc9cb6742)
