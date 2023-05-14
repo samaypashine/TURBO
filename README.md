@@ -30,6 +30,6 @@ TURBO (Twin Universal Robot Boosting Operation). This is the project dealing wit
    ``` rosrun turbo_demos pick_n_place```
 
 ## Teleoperation Demonstration
-   <p align="center">
-   ![ezgif com-gif-maker1](https://github.com/samaypashine/TURBO/assets/51475380/eb6d0b7f-4194-4f0c-a749-93bcc9cb6742)
+   <p align="center"> 
+      <img src="https://github.com/samaypashine/TURBO/assets/51475380/eb6d0b7f-4194-4f0c-a749-93bcc9cb6742" />
    </p>
