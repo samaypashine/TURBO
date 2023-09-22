@@ -1,9 +1,16 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="debug" default="false"/>
-  <arg name="limited" default="false"/>
+  <arg name="debug_moveit" default="false"/>
+  <arg name="debug_left" default="false"/>
+  <arg name="left_gripper_test" default="false"/>
+  <arg name="limited_left" default="false"/>
+   
+  <arg name="left_robot_ip" default="182.22.22.2"/>
+  <arg name="left_prefix" default="left"/>
+  <arg name="left_kinematics_config" default="$(find turbo_description)/config/left_arm_calibration.yaml"/>
+  <arg name="left_controller_config_file" default="$(find ur_robot_driver)/config/ur5_left_controllers.yaml"/>    
+
   <arg name="robot_description" default="$(find turbo_description)/launch/load_left.launch"/>
-  <arg name="left_kinematics_config" value="$(find turbo_description)/config/left_arm_calibration.yaml"/>
 
   <!-- ur5 driver -->
   <!-- Load robot URDF -->  
@@ -12,26 +19,30 @@
     <arg name="left_kinematics_params" value="$(arg left_kinematics_config)"/>
   </include>
 
-  <group ns="left">
+  <!-- Initializing left Arm with the following Configuration -->
+  <group ns="$(arg left_prefix)">    
     <include file="$(find ur_robot_driver)/launch/ur5_bringup.launch">
-      <arg name="debug" value="$(arg debug)"/>
-      <arg name="limited" value="$(arg limited)"/>
-      <arg name="robot_ip" value="182.22.22.2"/>
-      <arg name="tf_prefix" value="left"/>
-      <arg name="kinematics_config" value="$(arg left_kinematics_config)"/>  
-      <arg name="controller_config_file" value="$(find ur_robot_driver)/config/ur5_left_controllers.yaml"/>    
-      
-      <arg name="controllers" value="left_joint_state_controller left_scaled_pos_joint_traj_controller left_speed_scaling_state_controller left_force_torque_sensor_controller"/>
-      <arg name="stopped_controllers" value="left_pos_joint_traj_controller left_joint_group_vel_controller"/>
-      
+      <arg name="debug" value="$(arg debug_left)"/>
+      <arg name="limited" value="$(arg limited_left)"/>
+      <arg name="robot_ip" value="$(arg left_robot_ip)"/>
+      <arg name="tf_prefix" value="$(arg left_prefix)_"/>
+      <arg name="kinematics_config" value="$(arg left_kinematics_config)"/>
+      <arg name="controller_config_file" value="$(arg left_controller_config_file)"/>
       <arg name="reverse_port" value="50001"/>
       <arg name="script_sender_port" value="50002"/>
       <arg name="trajectory_port" value="50003"/>
-      <arg name="script_command_port" value="50004"/>
+      <arg name="script_command_port" value="5004"/>
+    </include>
+
+    <!-- left gripper driver --> 
+    <include file="$(find turbo_bringup)/launch/robotiq_85.launch">
+      <arg name="gripper_test" value="$(arg left_gripper_test)"/>
+      <arg name="comport" value="/dev/ttyUSB0"/>
     </include>
   </group>
 
-  <node name="left_joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" respawn="true">
+  <!-- Launching the Joint State Publisher with the following source topics -->
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" respawn="true">
     <rosparam param="source_list">[/left/gripper/joint_states, /left/joint_states]</rosparam>
     <param name="rate" value="50" />
   </node>
@@ -41,17 +52,13 @@
     <arg name="allow_trajectory_execution" value="true"/>
     <arg name="fake_execution" value="false"/>
     <arg name="info" value="true"/>
-    <arg name="debug" value="$(arg debug)"/>
+    <arg name="debug" value="$(arg debug_moveit)"/>
   </include>
 
   <!-- Run Rviz and load the default config to see the state of the move_group node -->
   <include file="$(find turbo_left_moveit_config)/launch/moveit_rviz.launch">
     <arg name="rviz_config" value="true"/>
-    <arg name="debug" value="$(arg debug)"/>
+    <arg name="debug" value="$(arg debug_moveit)"/>
   </include>
 
-  <!-- Planning Functionality -->
-  <include ns="move_group" file="$(find turbo_left_moveit_config)/launch/planning_pipeline.launch.xml">
-    <arg name="pipeline" value="ompl" />
-  </include>
 </launch>

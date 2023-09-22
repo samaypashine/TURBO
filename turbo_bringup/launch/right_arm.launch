@@ -1,9 +1,16 @@
 <?xml version="1.0"?>
 <launch>
-  <arg name="debug" default="false"/>
-  <arg name="limited" default="false"/>
+  <arg name="debug_moveit" default="false"/>
+  <arg name="debug_right" default="false"/>
+  <arg name="right_gripper_test" default="false"/>
+  <arg name="limited_right" default="false"/>
+   
+  <arg name="right_robot_ip" default="172.22.22.2"/>
+  <arg name="right_prefix" default="right"/>
+  <arg name="right_kinematics_config" default="$(find turbo_description)/config/right_arm_calibration.yaml"/>
+  <arg name="right_controller_config_file" default="$(find ur_robot_driver)/config/ur5_right_controllers.yaml"/>    
+
   <arg name="robot_description" default="$(find turbo_description)/launch/load_right.launch"/>
-  <arg name="right_kinematics_config" value="$(find turbo_description)/config/right_arm_calibration.yaml"/>
 
   <!-- ur5 driver -->
   <!-- Load robot URDF -->  
@@ -12,27 +19,31 @@
     <arg name="right_kinematics_params" value="$(arg right_kinematics_config)"/>
   </include>
 
-  <group ns="right">
+  <!-- Initializing Right Arm with the following Configuration -->
+  <group ns="$(arg right_prefix)">    
     <include file="$(find ur_robot_driver)/launch/ur5_bringup.launch">
-      <arg name="debug" value="$(arg debug)"/>
-      <arg name="limited" value="$(arg limited)"/>
-      <arg name="robot_ip" value="172.22.22.2"/>
-      <arg name="tf_prefix" value="right"/>
-      <arg name="kinematics_config" value="$(arg right_kinematics_config)"/>  
-      <arg name="controller_config_file" value="$(find ur_robot_driver)/config/ur5_right_controllers.yaml"/>    
-      
-      <arg name="controllers" value="right_joint_state_controller right_scaled_pos_joint_traj_controller right_speed_scaling_state_controller right_force_torque_sensor_controller"/>
-      <arg name="stopped_controllers" value="right_pos_joint_traj_controller right_joint_group_vel_controller"/>
-      
+      <arg name="debug" value="$(arg debug_right)"/>
+      <arg name="limited" value="$(arg limited_right)"/>
+      <arg name="robot_ip" value="$(arg right_robot_ip)"/>
+      <arg name="tf_prefix" value="$(arg right_prefix)_"/>
+      <arg name="kinematics_config" value="$(arg right_kinematics_config)"/>
+      <arg name="controller_config_file" value="$(arg right_controller_config_file)"/>
       <arg name="reverse_port" value="50005"/>
       <arg name="script_sender_port" value="50006"/>
       <arg name="trajectory_port" value="50007"/>
       <arg name="script_command_port" value="50010"/>
     </include>
+
+    <!-- Right gripper driver --> 
+    <include file="$(find turbo_bringup)/launch/robotiq_85.launch">
+      <arg name="gripper_test" value="$(arg right_gripper_test)"/>
+      <arg name="comport" value="/dev/ttyUSB0"/>
+    </include>
   </group>
-  
-  <node name="right_joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" respawn="true">
-    <rosparam param="source_list">[/gripper/joint_states, /joint_states]</rosparam>
+
+  <!-- Launching the Joint State Publisher with the following source topics -->
+  <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" respawn="true">
+    <rosparam param="source_list">[/right/gripper/joint_states, /right/joint_states]</rosparam>
     <param name="rate" value="50" />
   </node>
 
@@ -41,18 +52,13 @@
     <arg name="allow_trajectory_execution" value="true"/>
     <arg name="fake_execution" value="false"/>
     <arg name="info" value="true"/>
-    <arg name="debug" value="$(arg debug)"/>
+    <arg name="debug" value="$(arg debug_moveit)"/>
   </include>
 
   <!-- Run Rviz and load the default config to see the state of the move_group node -->
   <include file="$(find turbo_right_moveit_config)/launch/moveit_rviz.launch">
     <arg name="rviz_config" value="true"/>
-    <arg name="debug" value="$(arg debug)"/>
-  </include>
-
-  <!-- Planning Functionality -->
-  <include ns="move_group" file="$(find turbo_right_moveit_config)/launch/planning_pipeline.launch.xml">
-    <arg name="pipeline" value="ompl" />
+    <arg name="debug" value="$(arg debug_moveit)"/>
   </include>
 
 </launch>
