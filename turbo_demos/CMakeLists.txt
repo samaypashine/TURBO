@@ -17,8 +17,15 @@ find_package(catkin REQUIRED COMPONENTS
   cv_bridge
   sensor_msgs
   std_msgs
+  pcl_ros
+  pcl_conversions
 )
+find_package(PCL 1.8 REQUIRED)
 
+
+include_directories((${PCL_INCLUDE_DIRS}))
+include_directories((${PCL_LIBRARY_DIRS}))
+include_directories((${PCL_DEFINITIONS}))
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
 
@@ -222,4 +229,6 @@ target_link_libraries(pick_n_place ${catkin_LIBRARIES})
 add_executable(teleoperation src/teleoperation.cpp)
 target_link_libraries(teleoperation ${catkin_LIBRARIES})
 
+add_executable(grasp_objects src/grasp_objects.cpp)
+target_link_libraries(grasp_objects ${catkin_LIBRARIES})
 # add_dependencies(pick_n_place ${turbo_robot_vision_EXPORTED_TARGETS})
