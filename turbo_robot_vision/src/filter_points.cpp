@@ -158,24 +158,17 @@ bool filter(PointCloudT::Ptr blob, Eigen::Vector4f plane_coefficients, double to
 		
 		if (distance > max_distance)
 			max_distance = distance;
-		
-		
-		
 	}
-	
 	
 	if (min_distance > tolerance)
 		return false;
 	/*else if (max_distance < 0.8*tolerance)
 		return false;	*/
 	
-	
 	ROS_INFO("\nMin Distance to plane for cluster with %i points: %f",(int)blob->points.size(),min_distance);
 	ROS_INFO("Max Distance to plane for cluster with %i points: %f",(int)blob->points.size(),max_distance);
-
 	
 	return true;
-	
 }
 
 /*
@@ -311,35 +304,36 @@ bool seg_cb(turbo_robot_vision::TabletopPerception::Request &req, turbo_robot_vi
 {
 	//get the point cloud by aggregating k successive input clouds
 	// ROS_INFO("Inside callback.");
-	PointCloudT::Ptr cloudOut (new PointCloudT);
+
 	tf::TransformListener listener;
 	listener.waitForTransform("camera_depth_optical_frame", "world", ros::Time(0), ros::Duration(3.0));
 	
-	waitForCloudK(15);
+	// waitForCloudK(15);
+	waitForCloud();
 	cloud = cloud_aggregated;
 
 	pcl_ros::transformPointCloud("world", *cloud, *cloud, listener);
 	
-	//**Step 1: z-filter and voxel filter**//
-	// ROS_INFO("Step 1.");
+	// ROS_INFO("Step 1: xyz-filter");
 	
 	// Create the filtering object
 	pcl::PassThrough<PointT> pass;
 	pass.setInputCloud (cloud);
 	pass.setFilterFieldName ("x");
-	pass.setFilterLimits (0.038783, 0.87016);
+	pass.setFilterLimits (0.038783, 0.87016); // table_corners_x
 	pass.filter (*cloud);
 
 	pass.setInputCloud (cloud);
 	pass.setFilterFieldName ("y");
-	pass.setFilterLimits (0.031553, 0.46748);
+	pass.setFilterLimits (0.031553, 0.46748); // table_corners_y
 	pass.filter (*cloud);
 
 	pass.setInputCloud (cloud);
 	pass.setFilterFieldName ("z");
-	pass.setFilterLimits (0.70, 0.90);
+	pass.setFilterLimits (0.73, 0.90); // table_height_z
 	pass.filter (*cloud);
-	// ROS_INFO("Step 2.");
+
+	// ROS_INFO("Step 2: voxel filter");
 	
 	// Create the filtering object: downsample the dataset using a leaf size of 1cm
 	pcl::VoxelGrid<PointT> vg;
@@ -350,86 +344,29 @@ bool seg_cb(turbo_robot_vision::TabletopPerception::Request &req, turbo_robot_vi
 
     ROS_INFO("After voxel grid filter: %i points",(int)cloud_filtered->points.size());
     
-    //**Step 2: plane fitting**//
-    
-    //find plane
-    //one cloud contains plane other cloud contains other objects
-    pcl::ModelCoefficients::Ptr coefficients (new pcl::ModelCoefficients ());
-	pcl::PointIndices::Ptr inliers (new pcl::PointIndices ());
-    // Create the segmentation object
-	pcl::SACSegmentation<PointT> seg;
-	// Optional
-    seg.setOptimizeCoefficients (true);
-	// Mandatory
-	seg.setModelType (pcl::SACMODEL_PLANE);
-	seg.setMethodType (pcl::SAC_RANSAC);
-	seg.setMaxIterations (1000);
-	seg.setDistanceThreshold (0.02);
-
-	// Create the filtering object
-	pcl::ExtractIndices<PointT> extract;
-
-	// Segment the largest planar component from the remaining cloud
-	seg.setInputCloud (cloud_filtered);
-	seg.segment (*inliers, *coefficients);
-
-	// Extract the plane
-	extract.setInputCloud (cloud_filtered);
-	extract.setIndices (inliers);
-	extract.setNegative (false);
-	extract.filter (*cloud_plane);
-
-	if(cloud_plane->empty()){
-		res.is_plane_found = false;
-		return true;
-	}
-	     
-    //for everything else, cluster extraction; segment extraction
-    //extract everything else
-	extract.setNegative (true);
-	extract.filter (*cloud_blobs);
-
-	//publish point cloud for debugging
-	ROS_INFO("Publishing point cloud...");
-	pcl::toROSMsg(*cloud_blobs,cloud_ros);
-	cloud_ros.header.frame_id = cloud->header.frame_id;
-
-    //get the plane coefficients
+    // set the plane coefficients
 	Eigen::Vector4f plane_coefficients;
-	plane_coefficients(0)=coefficients->values[0]; // + 0.1;
-	plane_coefficients(1)=coefficients->values[1]; // + 0.5;
-	plane_coefficients(2)=coefficients->values[2]; // + 0.1;
-	plane_coefficients(3)=coefficients->values[3];
+	plane_coefficients(0)=0;
+	plane_coefficients(1)=0;
+	plane_coefficients(2)=1;
+	plane_coefficients(3)=-0.722107;
 
-    ROS_INFO_STREAM(plane_coefficients);
-
-    //**Step 3: Eucledian Cluster Extraction**//
-	std::vector<PointCloudT::Ptr > clusters = computeClusters(cloud_blobs,0.04);
+	// ROS_INFO("Step 3: Eucledian Cluster Extraction");
+	std::vector<PointCloudT::Ptr > clusters = computeClusters(cloud_filtered, 0.04);
 	
 	ROS_INFO("clusters found: %i", (int)clusters.size());
 	
 	clusters_on_plane.clear();
 
-	//creates a box contraint and filters out noise outside of specified box based on the found plane for max values
-	pcl::CropBox<pcl::PointXYZRGB> boxFilter;
-	boxFilter.setMin(Eigen::Vector4f(0, 0, 0, -1.0));
-	boxFilter.setMax(plane_coefficients);
-	boxFilter.setInputCloud(cloud_filtered);
-	boxFilter.filter(*cloud_plane);
-
-	
 	//if clusters are touching the table put them in a vector
+	// ROS_INFO("Step 5: find clusters_on_plane");
 	for (unsigned int i = 0; i < clusters.size(); i++){
-
-
 		bool accept = filter(clusters.at(i),plane_coefficients,plane_distance_tolerance);
 		if (accept)
 		{
 			clusters_on_plane.push_back(clusters.at(i));
 		}
-
 	}
-
 
 	ROS_INFO("clustes_on_plane found: %i", (int)clusters_on_plane.size());
 
@@ -437,7 +374,7 @@ bool seg_cb(turbo_robot_vision::TabletopPerception::Request &req, turbo_robot_vi
 	
 	//fill in responses
 	//plane cloud and coefficient
-	pcl::toROSMsg(*cloud_plane,res.cloud_plane);
+	pcl::toROSMsg(*cloud_filtered, res.cloud_plane);
 	res.cloud_plane.header.frame_id = cloud->header.frame_id;
 	for (int i = 0; i < 4; i ++){
 		res.cloud_plane_coef[i] = plane_coefficients(i);
