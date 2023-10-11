@@ -161,8 +161,13 @@ add_executable(object_detection_testclient src/object_detection_testclient.cpp)
 target_link_libraries(object_detection_testclient ${catkin_LIBRARIES} ${PCL_LIBRARIES})
 add_dependencies(object_detection_testclient ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} turbo_robot_vision_gencpp)
 
+add_executable(filter_points src/filter_points.cpp)
+target_link_libraries(filter_points ${catkin_LIBRARIES} ${PCL_LIBRARIES})
+add_dependencies(filter_points ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} turbo_robot_vision_gencpp)
+
 add_dependencies(object_detection_node ${turbo_robot_vision_EXPORTED_TARGETS})
 add_dependencies(object_detection_testclient ${turbo_robot_vision_EXPORTED_TARGETS})
+add_dependencies(filter_points ${turbo_robot_vision_EXPORTED_TARGETS})
 
 ## Add cmake target dependencies of the executable
 ## same as for the library above
