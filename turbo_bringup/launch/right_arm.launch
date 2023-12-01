@@ -61,4 +61,11 @@
     <arg name="debug" value="$(arg debug_moveit)"/>
   </include>
 
+  <!-- launch the gazebo simulator and spawn the robot -->
+  <include file="$(find turbo_right_moveit_config)/launch/gazebo.launch" >
+    <arg name="paused" value="false"/>
+    <arg name="gazebo_gui" value="true"/>
+    <arg name="urdf_path" value="$(find turbo_description)/urdf/right_arm.urdf"/>
+  </include>
+
 </launch>
