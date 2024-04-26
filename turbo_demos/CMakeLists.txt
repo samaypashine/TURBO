@@ -224,11 +224,13 @@ include_directories(
 
 add_executable(pick_n_place src/pick_n_place.cpp)
 target_link_libraries(pick_n_place ${catkin_LIBRARIES})
+add_dependencies(pick_n_place ${turbo_robot_vision_EXPORTED_TARGETS})
 # add_dependencies(pick_n_place ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS} turbo_demos_generate_messages_cpp)
 
 add_executable(teleoperation src/teleoperation.cpp)
 target_link_libraries(teleoperation ${catkin_LIBRARIES})
+add_dependencies(teleoperation ${turbo_robot_vision_EXPORTED_TARGETS})
 
 add_executable(grasp_objects src/grasp_objects.cpp)
 target_link_libraries(grasp_objects ${catkin_LIBRARIES})
-# add_dependencies(pick_n_place ${turbo_robot_vision_EXPORTED_TARGETS})
+add_dependencies(grasp_objects ${turbo_robot_vision_EXPORTED_TARGETS})
